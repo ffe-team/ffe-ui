@@ -2,7 +2,7 @@
 
 A mobile ui lib based on React.
 
-##TODO: 
+## TODO
 
 - [ ] Accordion
 - [ ] ActionSheet

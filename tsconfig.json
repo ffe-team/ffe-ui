@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "jsx": "preserve",
+    "allowSyntheticDefaultImports":true,
+    "target": "es6",
+    "typeRoots": ["./typings"],
+    "experimentalDecorators": true
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src/**/*"
+  ],
+  "complieOnSave": false
+}

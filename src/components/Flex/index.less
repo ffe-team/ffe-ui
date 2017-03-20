@@ -1,0 +1,121 @@
+/**
+ * Flex 样式
+ */
+@import '~style/theme.less';
+
+.flex-item(@n, @i) {}
+.flex-item(@n, @i: 1) when (@i <= @n) {
+    .@{prefix-cls}-flex-item-@{i} {
+        flex: @i;
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+    .@{prefix-cls}-flex-item-offset-@{i} {
+        margin-left: @i/@n*240px;
+    }
+    .flex-item(@n, @i + 1)
+}
+.@{prefix-cls}-flex {
+    display: flex;
+    // flex-direction
+    &-dir-row {
+        flex-direction: row;
+    }
+    &-dir-row-reverse {
+        flex-direction: row-reverse;
+    }
+    &-dir-column {
+        flex-direction: column;
+    }
+    &-dir-column-reverse {
+        flex-direction: column-reverse;
+    }
+
+    // flex-wrap
+    &-wrap {
+        flex-wrap: wrap;
+    }
+    &-nowrap {
+        flex-wrap: nowrap;
+    }
+    &-wrap-reverse {
+        flex-wrap: wrap-reverse;
+    }
+
+    // align-items
+
+    &-align-start {
+        align-items: flex-start;
+    }
+    &-align-center {
+        align-items: center;
+    }  
+    &-align-end {
+        align-items: flex-end;
+    }
+    &-align-baseline {  
+        align-items: baseline;
+    }
+    &-align-stretch {
+        align-items: stretch;
+    }
+
+    // justify-content
+    &-justify-start {
+        justify-content: flex-start;
+    }
+    &-justify-end {
+        justify-content: flex-end;
+    }
+    &-justify-center {
+        justify-content: center;
+    }
+    &-justify-bwtween {
+        justify-content: space-between;
+    }
+    &-justify-around {
+        justify-content: space-around;
+    }
+
+    // align-content
+
+    &-align-content-start {
+        align-content: flex-start;
+    }
+    &-align-content-end {
+        align-content: flex-end;
+    }
+    &-align-content-center {
+        align-content: center;
+    }
+    &-align-content-between {
+        align-content: space-between;
+    }
+    &-align-content-around {
+        align-content: space-around;
+    }
+    &-align-content-stretch {
+        align-content: stretch;
+    }
+
+    // flex-item offset
+    .flex-item(24);
+
+    .@{prefix-cls}-flex-item {
+      &-align-stretch {
+          align-self: stretch;
+      }
+      &-align-center {
+          align-self: center;
+      }
+      &-align-start {
+          align-self: start;
+      }
+      &-align-end {
+          align-self: end;
+      }
+      &-align-baseline {
+          align-self: baseline;
+      }
+    }
+}

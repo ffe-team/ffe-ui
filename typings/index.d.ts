@@ -1,1 +1,1 @@
-/// <reference types="./custom.d.ts" >
+/// <reference path="custom.d.ts" />

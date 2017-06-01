@@ -1,0 +1,45 @@
+@import '~style/theme.less';
+
+.@{prefix-cls}-accordion {
+  background: @background-component;
+  &-item {
+    &:first-child {
+      border-top: solid 1px @border-color-base;
+    }
+  }
+  &-item-active {
+    border-bottom: solid 1px @border-color-base;
+  }
+  &-content {
+    overflow: hidden;
+    background: #fff;
+    transform: translate(0, 0, 0);
+    transition: all 300ms ease-in-out;
+    &-body {
+      padding: 10px;
+    }
+  }
+  &-content-inactive {
+    height: 0px;
+  }
+  &-header {
+    position: relative;
+    box-sizing: border-box;
+    border-bottom: solid 1px @border-color-base;
+    padding: 15px;
+    padding-right: 30px;
+    cursor: pointer;
+  }
+  &-arrow {
+    position: absolute;
+    font-size: 18px;
+    vertical-align: middle;
+    right: 15px;
+    top: 50%;
+    margin-top: -9px;
+    transition: transform 300ms ease;
+  }
+  &-item-active &-arrow {
+    transform: rotate(90deg)
+  }
+}

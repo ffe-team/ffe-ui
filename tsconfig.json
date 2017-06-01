@@ -1,20 +1,26 @@
 {
+  "compileOnSave": true,
+  "buildOnSave": false,
   "compilerOptions": {
-    "noUnusedLocals": false,
-    "noUnusedParameters": true,
-    "strictNullChecks": true,
-    "moduleResolution": "node",
-    "jsx": "preserve",
-    "allowSyntheticDefaultImports":true,
+    "module": "commonjs",
     "target": "es6",
-    "typeRoots": ["./typings"],
-    "experimentalDecorators": true
+    "jsx": "react",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "removeComments": false,
+    "sourceMap": false,
+    "inlineSourceMap": true,
+    "noEmitHelpers": true
+  },
+  "awesomeTypescriptLoaderOptions": {
+    "useBabel": true,
+    "useCache": false,
+    "emitRequireType": false
   },
   "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "src/**/*"
-  ],
-  "complieOnSave": false
+    "node_modules",
+    "dist"
+  ]
 }

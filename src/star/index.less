@@ -1,0 +1,33 @@
+@import '~style/theme.less';
+@starColor: #000;
+@emptyColor: #fff;
+
+.@{prefix-cls}-star {
+  position: relative;
+  display: inline-block;
+
+  &-input {
+    display: none;
+  }
+  &.@{prefix-cls}-star-non-editable {
+    label {
+      cursor: initial;
+    }
+  }
+  label {
+    float: right;
+    cursor: pointer;
+    font-style: normal;
+    font-style: normal;
+  }
+  &-icon {
+    font-style: initial;
+    transition: color 100ms ease-in-out;
+  }
+  &-label-empty &-icon {
+    color: @emptyColor;
+  }
+  &-label &-icon {
+    color: @starColor;
+  }
+}

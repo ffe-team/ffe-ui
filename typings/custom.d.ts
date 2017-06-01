@@ -1,2 +1,3 @@
+declare module 'classnames';
 declare module 'moment';
-declare var y;
+declare module 'react-router';

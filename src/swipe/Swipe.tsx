@@ -26,6 +26,7 @@ interface SwipePropTypes {
   onSwipeChangeEnd?: (swipe: any) => void
   onDestroy?: (swipe: any) => void,
   onAutoPlay?: (swipe: any) => void,
+  prefixCls?: string
 }
 
 class Swipe extends React.Component<SwipePropTypes, any> {
@@ -39,6 +40,7 @@ class Swipe extends React.Component<SwipePropTypes, any> {
     direction: 'horizontal',
     loop: false,
     initialSlide: 0,
+    prefixCls: 'ffe-swipe',
   }
 
   constructor(props) {
@@ -49,14 +51,21 @@ class Swipe extends React.Component<SwipePropTypes, any> {
     }
   }
   move() {
-
+    
   }
   translate() {
 
   }
   render() {
-    
-  }
-  
+    const { prefixCls } = this.props
 
+    return (
+      <div className={prefixCls}>
+        <div className={`${prefixCls}-wrap`}>
+        </div>
+      </div>
+    )
+  }
 }
+
+export default Swipe

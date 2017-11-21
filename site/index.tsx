@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as ReactDOM from 'react-dom'
+import { render } from 'react-dom'
 import {
   BrowserRouter as Router,
   Route,
@@ -33,4 +33,4 @@ class App extends React.Component<any, any> {
 }
 
 
-ReactDOM.render(<App />, document.getElementById('app'))
+render(<App />, document.getElementById('app'))

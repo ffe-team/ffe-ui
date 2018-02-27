@@ -1,0 +1,34 @@
+.ffe-swipe {
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+  &-wrap {
+    height: 100%;
+    overflow: hidden;
+    transition: all 300ms linear;
+    // transition-timing-function: linear;
+  }
+  &-item {
+    float: left;
+    height: 100%;
+  }
+  &-indicator {
+    position: absolute;
+    bottom: 10px;
+    overflow: hidden;
+    margin: 0;
+    right: 15px;
+
+    & &-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 8px;
+      margin-right: 4px;
+      float: left;
+      background: #fff;
+    }
+    & &-active {
+      background: #e54e5c;
+    }
+  }
+}

@@ -12,6 +12,7 @@ import AccordionDemo from '../src/accordion/demo/index'
 import StarDemo from '../src/star/demo/index'
 import TabsDemo from '../src/tab/demo/index'
 import BadgeDemo from '../src/badge/demo/index'
+import SwipeDemo from '../src/swipe/demo/index'
 
 class App extends React.Component<any, any> {
   constructor(props) {
@@ -26,6 +27,7 @@ class App extends React.Component<any, any> {
           <Route path="/star" component={StarDemo} />
           <Route path="/tabs" component={TabsDemo} />
           <Route path="/badge" component={BadgeDemo} />
+          <Route path="/swipe" component={SwipeDemo} />
         </Switch>
       </Router>
     )

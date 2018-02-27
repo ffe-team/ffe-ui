@@ -59,8 +59,8 @@ class Accordion extends React.Component<AccordionProps, any> {
   }
   getPanels() {
     let { activeKey } = this.state, { prefixCls, linkage, children, arrow } = this.props
-
     const newChildren: Array<any> = React.Children.map(children, item => item)
+
     return React.Children.map(newChildren, (child: any, idx) => {
       let key = String(idx), isActive = false
 

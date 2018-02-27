@@ -3,66 +3,65 @@
  */
 
 @import '~style/theme.less';
-
 .@{prefix-cls}-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  &-item {
+    position: relative;
+    padding: 0 0 12px 0;
     list-style: none;
     margin: 0;
-    padding: 0;
-    &-item {
-        position: relative;
-        padding: 0 0 12px 0;
-        list-style: none;
-        margin: 0;
-        &-tail {
-            position: absolute;
-            left: 4px;
-            top: 0;
-            height: 100%;
-            border-left: 3px solid @default;
-        }
-        &-pending &-tail {
-            display: none;
-        }
-        &-head {
-            position: absolute;
-            width: 7px;
-            height: 7px;
-            top: 10px;
-            background: @default;
-            border-radius: 100px;
-            border: solid 2px transparent;
-        }
-        &-head-custom {
-            position: absolute;
-            text-align: center;
-            width: 40px;
-            left: -14px;
-            line-height: 1;
-            margin-top: 6px;
-            border: 0;
-            height: auto;
-            border-radius: 0;
-            padding: 3px 0;
-            font-size: @text-base;
-            transform: translateY(-50%);
-        }
-        &-content {
-            padding: 0 0 @padding-base-vertical @padding-base-horizontal;
-            font-size: @text-base;
-            position: relative;
-            top: -3px;
-        }
-        &-last {
-            .@{prefix-cls}-timeline-item-tail {
-                border-left: 2px dotted @black;
-                display: none;
-            }
-            .@{prefix-cls}-timeline-item-content {
-                min-height: 30px;
-            }
-        }
+    &-tail {
+      position: absolute;
+      left: 4px;
+      top: 0;
+      height: 100%;
+      border-left: 3px solid @default;
     }
-    &-item-last &-item-tail {
-        display: block;
+    &-pending &-tail {
+      display: none;
     }
+    &-head {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      top: 10px;
+      background: @default;
+      border-radius: 100px;
+      border: solid 2px transparent;
+    }
+    &-head-custom {
+      position: absolute;
+      text-align: center;
+      width: 40px;
+      left: -14px;
+      line-height: 1;
+      margin-top: 6px;
+      border: 0;
+      height: auto;
+      border-radius: 0;
+      padding: 3px 0;
+      font-size: @text-base;
+      transform: translateY(-50%);
+    }
+    &-content {
+      padding: 0 0 @padding-base-vertical @padding-base-horizontal;
+      font-size: @text-base;
+      position: relative;
+      top: -3px;
+    }
+    &-last {
+      .@{prefix-cls}-timeline-item-tail {
+        border-left: 2px dotted @black;
+        display: none;
+      }
+      .@{prefix-cls}-timeline-item-content {
+        min-height: 30px;
+      }
+    }
+  }
+  &-item-last &-item-tail {
+    display: block;
+  }
 }

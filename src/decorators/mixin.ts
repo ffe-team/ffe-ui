@@ -12,9 +12,9 @@ function mixin(mixins: Array<Function>): Function {
     for(let i = 0, len = mixins.length; i < len; i ++) {
       let pNames = Object.getOwnPropertyNames(mixins[i])
 
-      // Symbol 类型的键值
-      let sNames: Symbol[] = Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols(mixins[i]) : []
-      let keys = [].concat.call(pNames, sNames)
+      // TODO: Symbol 类型的键值
+      // let sNames: Symbol[] = Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols(mixins[i]) : []
+      let keys = [].concat.call(pNames)
 
       for(let j = 0; j < keys.length; j ++) {
         const key = keys[j]

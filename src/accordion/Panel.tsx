@@ -1,14 +1,13 @@
 /*
  * @Author: ssruoyan 
  * @Date: 2017-03-27 21:46:22 
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2017-04-17 18:30:28
+ * @Last Modified by: chenhao
+ * @Last Modified time: 2018-01-16 10:51:27
  */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as classnames from 'classnames';
 import Icon from '../icon';
-import Touchable from '../touchable';
 
 interface PanelProps {
   isActive?: boolean,
@@ -52,14 +51,13 @@ class Panel extends React.Component<PanelProps, any> {
 
     return (
       <div className={classSet}>
-        <Touchable onTap={this.handleClickPanel.bind(this)}>
-          <div
-            className={`${prefixCls}-header`}
-            role="header">
-            {arrow ? <Icon icon="right" className={`${prefixCls}-arrow`}/> : ''}
-            { header }
-          </div>
-        </Touchable>
+        <div
+          onClick={this.handleClickPanel.bind(this)}
+          className={`${prefixCls}-header`}
+          role="header">
+          {arrow ? <Icon icon="right" className={`${prefixCls}-arrow`}/> : ''}
+          { header }
+        </div>
         <div ref="content" style={style} className={panelCls}>
           <div className={`${prefixCls}-content-body`}>
               {children}

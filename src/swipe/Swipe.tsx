@@ -6,49 +6,168 @@
  * @modified time: 2017-09-06 17:42:39
  */
 
-import * as React from 'react'
 import * as classnames from 'classnames'
+import * as React from 'react'
 import Indicator from './Indicator'
 
 import './index.less'
 
-interface PropTypes {
-  className?: string,
-  auto?: boolean | number,
-  indicator?: boolean,
-  loop?: boolean,
-  speed?: number,
-  activeSlide?: number,
+interface IPropTypes {
+  className?: string
 
-  onTransitionStart?: (swipe: any) => void,
-  onTransitionEnd?: (swipe: any) => void,
-  onSwipeChangeStart?: (swipe: any) => void,
-  onSwipeChangeEnd?: (swipe: any) => void
-  onDestroy?: (swipe: any) => void,
-  onAutoPlay?: (swipe: any) => void,
+  // auto play swipe
+  auto?: boolean
+
+  // autoplay duration
+  duration?: number
+
+  // show indicator
+  indicator?: boolean
+
+  // loop shift
+  loop?: boolean
+
+  // duration of transition between two slides
+  speed?: number
+
+  // active slide index
+  activeSlide?: number
+
+  // finger swipe direction
+  direction?: 'h' | 'v'
+
+  // prevent default touch event
+  preventDefault?: boolean
+
+  // swipe change slide threshold percent
+  threshold?: number
+
+  // transition effect
+  effect?: 'slide' | 'fade' | '3d' | 'skew' | 'none'
+
+  easeing?: 'linear' | 'easeInOut' | 'easeIn' | 'easeOut'
+  // class prefix
   prefixCls?: string
+
+  // slide change event
+  onChange?: (index: number) => void
+
+  // init over
+  onReady?: () => void
+
+  // swipe destoryed
+  onDestroy?: () => void
+
+  // event
+  onTransitionStart?: (index: number) => void
+  onTransitionEnd?: (index: number) => void
+
+  // touchevent
+  onTouchStart?: () => void
+  onTouchMove?: () => void
+  onTouchEnd?: () => void
+
+  // moving handler
+  onMove?: () => void
 }
 
-interface StateTypes {
-  count: number,
-  width: number,
-  offset: number,
-  swipes: Array<{offset: number}>,
+type Swipes = Array<{style: React.CSSProperties}>
+
+interface IStateTypes {
+  count: number
+  width: number
+  offset: number
+  swipes: Swipes
   active: number
-  duration: number,
+  duration: number
   direction: string
 }
 
-class Swipe extends React.Component<PropTypes, StateTypes> {
+const TRANSITION = {
+  slide(swipes: Swipes, prev, current, next, move, width) {
+    const len = swipes.length
 
-  public static Item: any
+    swipes[current].style = {
+      ...swipes[current].style,
+      transform: `translateX(${move}px)`,
+      display: 'block',
+    }
+    swipes[next].style = {
+      ...swipes[next].style,
+      transform: `translateX(${width + move}px)`,
+      display: 'block',
+    }
+    swipes[prev].style = {
+      ...swipes[prev].style,
+      transform: `translateX(${-width + move}px)`,
+      display: 'block',
+    }
 
-  public static defaultProps : PropTypes = {
+    return swipes
+  },
+  fade(swipes: Swipes, prev, current, next, move, width) {
+    const len = swipes.length
+    const percent = move / width
+
+    swipes[current].style = {
+      opacity: 1 - Math.abs(percent)
+    }
+    if (percent > 0) {
+      swipes[next].style = {
+        opacity: percent,
+      }
+    }
+    if (percent < 0) {
+      swipes[prev].style = {
+        opacity: Math.abs(percent)
+      }
+    }
+
+    return swipes
+  },
+  perspect() {
+
+  },
+  skew() {
+
+  },
+  none() {}
+}
+
+function next(c, l) {
+  return c + 1 >= l ? 0 : c + 1
+}
+function prev(c, l) {
+  return c - 1 < 0 ? l - 1 : c - 1
+}
+
+const EASE = {
+  linear: (t) => {
+    return t
+  },
+  easeIn: (t) => {
+    return t * t * t
+  },
+  easeOutCubic: (t) => {
+    return (--t) * t * t + 1
+  },
+  easeInOut: (t) => {
+    return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1
+  },
+}
+
+class Swipe extends React.Component<IPropTypes, IStateTypes> {
+
+  static Item: any
+
+  static defaultProps = {
     auto: false,
     indicator: false,
+    duration: 1000,
     speed: 400,
     loop: false,
     activeSlide: 0,
+    effect: 'slide',
     prefixCls: 'ffe-swipe',
   }
   timer: number
@@ -64,196 +183,176 @@ class Swipe extends React.Component<PropTypes, StateTypes> {
     super(props)
 
     const len = props.children.length
+    const style = {
+      display: 'none',
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      width: '100%',
+      height: '100%',
+      zIndex: 1,
+    }
+    const swipes = props.children.map(() => ({ style }))
+    const active = props.activeSlide || 0
 
     this.state = {
       count: len,
       width: 0,
       offset: 0,
-      swipes: props.children.map(() => { return { offset: 0 }}),
-      active: props.activeSlide || 0,
+      swipes,
+      active,
       duration: 0,
-      direction: ''
+      direction: '',
     }
+
+    this.touchmove = this.touchmove.bind(this)
+    this.touchstart = this.touchstart.bind(this)
+    this.touchend = this.touchend.bind(this)
+    this.transitionend  = this.transitionend.bind(this)
   }
   componentDidMount() {
-    this.initialize()
+    this.init()
   }
-  initialize() {
+  init() {
     this.timer && clearTimeout(this.timer)
 
-    const { children, activeSlide, auto } = this.props
-    const count = React.Children.count(children)
+    const { children, activeSlide, auto, effect } = this.props
+    const { active, swipes, count } = this.state
     const { width } = this.node.getBoundingClientRect()
-    const duration = 0
-    const active = activeSlide
-    const offset = count > 1 ? -width * (active + 1) : 0
-    const swipes = [].map.call(children, () => {
-      return {
-        offset: 0
-      }
-    })
 
     this.setState({
-      offset,
-      active,
       width,
-      duration,
-      swipes,
+      swipes: TRANSITION[effect](swipes, prev(active, count), active, next(active, count), 0, width)
     })
 
     this.autoPlay()
   }
-  move(move: number = 0, offset: number = 0) {
-    let { active, width, count, swipes } = this.state
-    const { deltaX } = this.touch
-
-    if (move) {
-      if (active === -1) {
-        swipes[count - 1].offset = 0;
-      }
-      swipes[0].offset = active === count - 1 && move > 0 ? count * width : 0;
-      active += move;
-    } else {
-      if (active === 0) {
-        swipes[count - 1].offset = deltaX > 0 ? -count * width : 0;
-      } else if (active === count - 1) {
-        swipes[0].offset = deltaX < 0 ? count * width : 0;
-      }
-    }
+  moveTo(index: number, offset: number) {
+    const { active, swipes, width, count } = this.state
+    const { effect } = this.props
 
     this.setState({
-      offset: offset - (active + 1) * width,
-      swipes,
-      active,
+      active: index,
+      swipes: TRANSITION[effect](swipes, prev(index, count), index, next(index, count), 0, width)
     })
   }
+  move() {
+    const { effect } = this.props
+    const { width, count, swipes } = this.state
+    let { active } = this.state
+    let { deltaX }  = this.touch
+    const percent = deltaX / width
+
+    if (percent <= 1 && percent >= -1) {
+      this.setState({
+        swipes: TRANSITION[effect](swipes, prev(active, count), active, next(active, count), deltaX, width),
+      })
+    }
+  }
   autoPlay() {
-    const { auto, speed } = this.props
+    const { auto, duration, speed } = this.props
     const {  active, count } = this.state
 
     if (auto && count > 1) {
       clearTimeout(this.timer)
 
       this.timer = setTimeout(() => {
-        this.setState({
-          duration: 0,
-        })
-        if (active >= count) {
-          this.move(-count);
-        }
-        setTimeout(() => {
-          this.setState({
-            duration: speed,
-          })
-          this.move(1);
-          this.autoPlay();
-        }, 30);
-      }, auto)
+        this.moveTo(next(active, count), 0)
+        this.autoPlay()
+      }, duration)
     }
   }
-  handleTouchStart(event) {
-    clearTimeout(this.timer)
-
-    this.touch.deltaX = 0;
-    this.touch.direction = '';
-    this.touch.startX = event.touches[0].clientX;
-    this.touch.startY = event.touches[0].clientY;
-
-    this.setState({
-      duration: 0
-    })
-
+  touchstart(event) {
+    const { onTransitionStart } = this.props
     const { active, count } = this.state
 
-    if (active <= -1) {
-      this.move(count)
-    }
-    if (active >= count) {
-      this.move(-count)
-    }
-  }
-  handleTouchMove(event) {
+    this.timer && clearTimeout(this.timer)
 
-    const { width } = this.state 
+    this.touch.deltaX = 0
+    this.touch.direction = ''
+    this.touch.startX = event.touches[0].clientX
+    this.touch.startY = event.touches[0].clientY
+
+    this.setState({
+      duration: 0,
+    })
+  }
+  touchmove(event) {
+    const { preventDefault } = this.props
+    const { width } = this.state
     const direction = this.touch.direction || this.getDirection(event.touches[0])
 
+    preventDefault && event.preventDefault()
+
     this.touch.direction = direction
-    
-    if (direction === 'horizontal') {
-      event.preventDefault();
+
+    if (direction === 'X') {
 
       const range = Math.min(Math.max(this.touch.deltaX, -width), width)
 
-      this.touch.deltaX = event.touches[0].clientX - this.touch.startX;
+      this.touch.deltaX = event.touches[0].clientX - this.touch.startX
 
-      this.move(0, range);
+      this.move()
     }
   }
-  handleTouchEnd() {
-    const { speed } = this.props
-    const { width } = this.state
+  touchend() {
+    const { speed, threshold } = this.props
+    const { width, active, count } = this.state
 
     if (this.touch.deltaX) {
-      this.move(Math.abs(this.touch.deltaX) > width / 3 ? (this.touch.deltaX > 0 ? -1 : 1) : 0);
+      const percent = this.touch.deltaX / width
+
+      if (Math.abs(percent) >= threshold) {
+        this.moveTo(next(active, count), 0)
+      } else {
+        this.moveTo(active, 0)
+      }
 
       this.setState({
-        duration: speed
+        duration: speed,
       })
     }
-    this.autoPlay();
+    this.autoPlay()
   }
-  handleTransitionEnd() {
-    const { onTransitionEnd } = this.props
+  transitionend() {
+    const { onTransitionEnd, onChange } = this.props
     const { active } = this.state
 
     onTransitionEnd && onTransitionEnd(active)
   }
   getDirection(touch) {
-    const distanceX = Math.abs(touch.clientX - this.touch.startX);
-    const distanceY = Math.abs(touch.clientY - this.touch.startY);
+    const distanceX = Math.abs(touch.clientX - this.touch.startX)
+    const distanceY = Math.abs(touch.clientY - this.touch.startY)
 
-    return distanceX > distanceY ? 'horizontal' : distanceX < distanceY ? 'vertical' : '';
-  }
-  getStyle(idx: number) {
-    const { offset, width, swipes } = this.state
-
-    return {
-      width: `${width}px`,
-      transform: `translate(${swipes[idx].offset}px, 0)`
-    }
+    return distanceX >= distanceY ? 'X' : 'Y'
   }
   render() {
     const { prefixCls, children, indicator } = this.props
     const { swipes, width, count, active, duration, offset } = this.state
-
-    const newChildren: Array<any> = React.Children.map(children, item => item)
+    const newChildren: any[] = React.Children.map(children, (item) => item)
 
     return (
-      <div className={prefixCls} ref={node => this.node = node}>
+      <div className={prefixCls} ref={(node) => this.node = node}>
         <div
-          style={{
-            paddingLeft: `${width}px`,
-            width: `${(count + 2) * width}px`,
-            transitionDuration: `${duration}ms`,
-            transform: `translate(${offset}px, 0)`
-          }}
-          onTouchStart={this.handleTouchStart.bind(this)}
-          onTouchMove={this.handleTouchMove.bind(this)}
-          onTouchEnd={this.handleTouchEnd.bind(this)}
-          onTransitionEnd={this.handleTransitionEnd.bind(this)}
+          onTouchStart={this.touchstart}
+          onTouchMove={this.touchmove}
+          onTouchEnd={this.touchend}
+          onTransitionEnd={this.transitionend}
           className={`${prefixCls}-wrap`}>
         {
           React.Children.map(newChildren, (child: any, idx: number) => {
             return React.cloneElement(child, {
               ...child.props,
               key: idx,
-              style: this.getStyle(idx)
+              style: swipes[idx].style,
             })
           })
         }
         </div>
 
-        { indicator ? <Indicator count={count} activeIndex={active <= -1 ? count - 1 : active >= count ? 0 : active}/> : ''}
+        { indicator ? <Indicator
+            count={count}
+            activeIndex={active <= -1 ? count - 1 : active >= count ? 0 : active}/> : ''}
       </div>
     )
   }

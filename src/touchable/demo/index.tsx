@@ -26,7 +26,7 @@ class TouchableDemo extends React.Component<any, any> {
     })
   }
   render() {
-    const style = {
+    const style: React.CSSProperties = {
       margin: '100px auto',
       width: '300px',
       height: '300px',

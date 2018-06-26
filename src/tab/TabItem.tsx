@@ -1,7 +1,7 @@
-import * as React from 'react'
 import * as classnames from 'classnames'
+import * as React from 'react'
 
-interface TabItemPropTypes {
+interface IPropTypes {
   children: React.ReactNode,
   className?: string,
   active?: boolean,
@@ -12,7 +12,7 @@ interface TabItemPropTypes {
   key: string,
 }
 
-class TabItem extends React.Component<TabItemPropTypes, any> {
+class TabItem extends React.Component<IPropTypes, any> {
   constructor(props) {
     super(props)
   }

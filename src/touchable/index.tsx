@@ -106,7 +106,7 @@ class Touchable extends React.Component<TouchProps, any> {
 
       this.pinch = this.getPinch(this.prevX, this.prevY)
 
-      this.mutipleTimeout = setTimeout(() => {
+      this.mutipleTimeout = window.setTimeout(() => {
         this.emitEvent('onMultipleTap', touch)
       }, 0)
     }
@@ -114,7 +114,7 @@ class Touchable extends React.Component<TouchProps, any> {
     this.last = now
 
     clearTimeout(this.pressTimeout)
-    this.pressTimeout = setTimeout(() => {
+    this.pressTimeout = window.setTimeout(() => {
       this.emitEvent('onPress', touch)
     }, this.props.pressDelay)
   }
@@ -195,13 +195,13 @@ class Touchable extends React.Component<TouchProps, any> {
       touch.moveY = Math.abs(this.y1 - this.y2)
       if (touch.moveX > 0 || touch.moveY > 0) {
         clearTimeout(this.swipeTimeout)
-        this.swipeTimeout = setTimeout(() => {
+        this.swipeTimeout = window.setTimeout(() => {
           this.emitEvent(`onSwipe${touch.direction}`, touch)
         }, 0)
       }
     } else {
       clearTimeout(this.tapTimeout)
-      this.tapTimeout = setTimeout(() => {
+      this.tapTimeout = window.setTimeout(() => {
         this.emitEvent('onTap', touch)
       }, 0)
     }

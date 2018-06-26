@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import {
   BrowserRouter as Router,
   Route,
-  Switch
+  Switch,
 } from 'react-router-dom'
 import './style.less'
 
@@ -33,6 +33,5 @@ class App extends React.Component<any, any> {
     )
   }
 }
-
 
 render(<App />, document.getElementById('app'))

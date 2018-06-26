@@ -2,7 +2,7 @@
  * @Author: ssruoyan 
  * @Date: 2017-03-27 21:46:22 
  * @Last Modified by: chenhao
- * @Last Modified time: 2018-01-16 10:51:27
+ * @Last Modified time: 2018-05-09 12:04:27
  */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -29,10 +29,9 @@ class Panel extends React.Component<PanelProps, any> {
     super(props)
   }
   handleClickPanel() {
-    this.props.onClickPanel()
-  }
-  componentDidMount() {
-    this.node = ReactDOM.findDOMNode(this.refs.content)
+    const { onClickPanel } = this.props
+
+    onClickPanel && onClickPanel()
   }
   render() {
     const { className, prefixCls, children, isActive, arrow, header } = this.props
@@ -58,9 +57,9 @@ class Panel extends React.Component<PanelProps, any> {
           {arrow ? <Icon icon="right" className={`${prefixCls}-arrow`}/> : ''}
           { header }
         </div>
-        <div ref="content" style={style} className={panelCls}>
+        <div ref={(node) => this.node = node} style={style} className={panelCls}>
           <div className={`${prefixCls}-content-body`}>
-              {children}
+            {children}
           </div>
         </div>
       </div>

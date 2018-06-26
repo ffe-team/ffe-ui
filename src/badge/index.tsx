@@ -31,7 +31,7 @@ class Badge extends React.Component<BadgePropTypes, any> {
       }
     }
     const cls = {
-      [prefixCls]: true,
+      [`${prefixCls}`]: true,
       [`${prefixCls}-dot`]: dot,
       [`${prefixCls}-corner`]: corner,
       [`${prefixCls}-round`]: round

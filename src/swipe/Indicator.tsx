@@ -1,25 +1,24 @@
-import * as React from 'react'
 import * as classnames from 'classnames'
+import * as React from 'react'
 
 interface IndicatorPropTypes {
-  count: number;
-  activeIndex: number;
-  activeStyle?: React.CSSProperties;
-  prefixCls?: string;
-  onChange?: () => void;
+  count: number
+  activeIndex: number
+  activeStyle?: React.CSSProperties
+  prefixCls?: string
+  onChange?: () => void
 }
 
 class Indicator extends React.Component<IndicatorPropTypes, any> {
   static defaultProps = {
     activeIndex: 0,
-    onChange: (index: number) => {},
-    prefixCls: 'ffe-swipe-indicator'
+    prefixCls: 'ffe-swipe-indicator',
   }
   constructor(props) {
     super(props)
 
     this.state = {
-      activeIndex: props.activeIndex
+      activeIndex: props.activeIndex,
     }
 
     this.dots = this.dots.bind(this)
@@ -27,22 +26,22 @@ class Indicator extends React.Component<IndicatorPropTypes, any> {
   componentWillReceiveProps(nextProps) {
     if (nextProps.activeIndex !== this.props.activeIndex) {
       this.setState({
-        activeIndex: nextProps.activeIndex
+        activeIndex: nextProps.activeIndex,
       })
     }
   }
   dots() {
-    const dots = [],
+    const dots: React.ReactNode[] = [],
       { count, prefixCls } = this.props,
       { activeIndex } = this.state
 
     for (let i = 0; i < count; i++) {
-      let cls = {
+      const cls = {
         [`${prefixCls}-dot`]: true,
-        [`${prefixCls}-active`]: i === activeIndex
+        [`${prefixCls}-active`]: i === activeIndex,
       }
 
-      dots.push(<div key={i} className={classnames(cls)}></div>)
+      dots.push(<div key={i} className={classnames(cls)} />)
     }
 
     return dots

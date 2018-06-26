@@ -4,7 +4,7 @@ import './index.less'
 
 interface StarPropsTypes {
   name?: string,
-  count?: number,
+  count: number,
   value?: number,
   defaultValue?: number,
   starIcon?: (i: number, value: number, name: string) => React.ReactNode,
@@ -68,9 +68,7 @@ class Star extends React.Component<StarPropsTypes, any> {
   }
   renderStars() {
     const { name, count, editable, prefixCls } = this.props
-    const { value } = this.state
-
-    let starNodes = []
+    const { value } = this.state, starNodes: React.ReactNode[] = []
 
     for(let i = count; i >= 1; i--) {
       let id = `${name}_${i}`

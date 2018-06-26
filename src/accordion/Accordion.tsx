@@ -37,7 +37,8 @@ class Accordion extends React.Component<AccordionProps, any> {
     }
   }
   handleClickPanel(key) {
-    let activeKey = this.state.activeKey,  { linkage } = this.props
+    let { activeKey } = this.state, { onChange, linkage } = this.props
+
     if (linkage) {
       activeKey = activeKey[0] === key ? [] : [key]
     } else {
@@ -55,7 +56,7 @@ class Accordion extends React.Component<AccordionProps, any> {
       activeKey,
     })
 
-    this.props.onChange(activeKey)
+    onChange && onChange(activeKey)
   }
   getPanels() {
     let { activeKey } = this.state, { prefixCls, linkage, children, arrow } = this.props

@@ -1,9 +1,9 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import * as classnames from 'classnames'
-import Touchable from '../touchable'
+import Swipe from '../swipe'
 
-interface TabsPropTypes {
+interface IPropTypes {
   activeKey?: number,
   defaultActiveKey?: number,
   onChange?: (to: any) => void,
@@ -15,13 +15,13 @@ interface TabsPropTypes {
   className?: string,
 }
 
-class Tabs extends React.Component<TabsPropTypes, any> {
-  public static TabItem
+class Tabs extends React.Component<IPropTypes, any> {
+  static TabItem
   static defaultProps = {
-    prefixCls: 'ffe-tabs'
+    prefixCls: 'ffe-tabs',
   }
 
-  // record the nav boundingClientRect object
+  private nav: HTMLElement
   private navRect: any
 
   constructor(props) {
@@ -30,10 +30,16 @@ class Tabs extends React.Component<TabsPropTypes, any> {
       activeKey: props.activeKey || this.props.defaultActiveKey || 0,
       navList: [],
       navBarStyle: {
-        transform: 'translateX(0) translateZ(0)'
+        transform: 'translateX(0) translateZ(0)',
       },
     }
-    this.navRect = {}
+
+    this.renderContent = this.renderContent.bind(this)
+    this.handleNavTo = this.handleNavTo.bind(this)
+    this.handleTabClick = this.handleTabClick.bind(this)
+    this.updateNavBar = this.updateNavBar.bind(this)
+    this.updateNav = this.updateNav.bind(this)
+
   }
   componentWillReceiveProps(nextProps) {
     const { activeKey } = nextProps
@@ -46,44 +52,38 @@ class Tabs extends React.Component<TabsPropTypes, any> {
   }
   componentDidMount() {
     this.updateNav()
-    this.navRect = ReactDOM.findDOMNode(this.refs.nav).getBoundingClientRect()
+    this.navRect = this.nav.getBoundingClientRect()
   }
   renderContent() {
     const { navList } = this.state
     const { children, prefixCls } = this.props
-    const newChildren: Array<any> = React.Children.map(children, item => item)
+    const newChildren: any[] = React.Children.map(children, (item) => item)
 
-    return React.Children.map(newChildren, (ele:any, idx) => {
+    return React.Children.map(newChildren, (ele: React.ReactElement<any>, idx) => {
       const { tabId } = ele.props
 
-      return React.cloneElement(ele, {
-        ...ele.props,
-        prefixCls: `${prefixCls}-item`,
-        active: idx === this.state.activeKey,
-      })
+      return (
+        <Swipe.Item>
+          {
+            React.cloneElement(ele, {
+              ...ele.props,
+              prefixCls: `${prefixCls}-item`,
+              active: idx === this.state.activeKey,
+            })
+          }
+        </Swipe.Item>
+      )
     })
-  }
-  handleSwipeLeft() {
-    const { activeKey, navList } = this.state
-    const length = navList.length;
-
-    this.handleNavTo(activeKey + 1) 
-  }
-  handleSwipeRight() {
-    const { activeKey, navList } = this.state
-    const length = navList.length;
-
-    this.handleNavTo(activeKey - 1)
   }
   handleNavTo(index) {
     const { navList } = this.state
- 
+
     if (index < 0 || index >= navList.length) {
       return
     }
 
     this.setState({
-      activeKey: index
+      activeKey: index,
     }, () => {
       this.updateNav()
     })
@@ -92,8 +92,10 @@ class Tabs extends React.Component<TabsPropTypes, any> {
   // 点击Tabbar触发变更
   handleTabClick(idx, e) {
     const { navList, activeKey } = this.state
+    const { onTabClick } = this.props
 
-    this.props.onTabClick && this.props.onTabClick(navList[idx], e)
+    onTabClick && onTabClick(navList[idx], e)
+
     if (activeKey === idx) {
       return
     }
@@ -106,7 +108,7 @@ class Tabs extends React.Component<TabsPropTypes, any> {
   }
   updateNavBar() {
     const { navList, activeKey } = this.state
-    const ref = ReactDOM.findDOMNode(this.refs[`item_${activeKey}`])
+    const ref = this[`item-${activeKey}`]
     const boundingRect = ref.getBoundingClientRect()
     const offset = boundingRect.left - this.navRect.left
 
@@ -120,7 +122,7 @@ class Tabs extends React.Component<TabsPropTypes, any> {
     })
   }
   updateNav() {
-    let navList = []
+    const navList: any[] = []
     const { children } = this.props
     React.Children.map(children, (ele: any, idx) => {
       navList.push({
@@ -132,27 +134,20 @@ class Tabs extends React.Component<TabsPropTypes, any> {
         navList,
       }, () => {
         this.updateNavBar()
-      } )
+      })
     })
   }
   render() {
     const { className, prefixCls } = this.props
     const { navBarStyle, navList, activeKey } = this.state
 
-    const cls = {
-      [`${prefixCls}`]: true,
-    }
-    const contentStyle = {
-      transform: `translateX(${-100 * activeKey}%) translateZ(0)`
-    }
-
     return (
-      <div className={classnames(className, cls)}>
+      <div className={classnames(className, prefixCls)}>
         <div className={`${prefixCls}-bar`}>
           <div className={`${prefixCls}-nav-container`}>
             <div className={`${prefixCls}-nav-wrap`}>
               <div className={`${prefixCls}-nav-scroll`}>
-                <div className={`${prefixCls}-nav`} ref="nav">
+                <div className={`${prefixCls}-nav`} ref={(node) => this.nav = node}>
                   <div style={navBarStyle} className={`${prefixCls}-nav-bar`}>
                     <div className={`${prefixCls}-nav-bar-inner`}></div>
                   </div>
@@ -164,7 +159,7 @@ class Tabs extends React.Component<TabsPropTypes, any> {
                         [`${prefixCls}-nav-item-active`]: item.key === activeKey
                       }
                       return (
-                        <div ref={`item_${idx}`} key={item.key} onClick={this.handleTabClick.bind(this, idx)} className={classnames(navItemCls)}>{item.label}</div>
+                        <div ref={(node) => this[`item-${idx}`] = node}  key={item.key} onClick={this.handleTabClick.bind(this, idx)} className={classnames(navItemCls)}>{item.label}</div>
                       )
                     })
                   }
@@ -173,11 +168,11 @@ class Tabs extends React.Component<TabsPropTypes, any> {
             </div>
           </div>
         </div>
-        <Touchable onSwipeLeft={this.handleSwipeLeft.bind(this)} onSwipeRight={this.handleSwipeRight.bind(this)}>
-          <div style={contentStyle} className={`${prefixCls}-content`}>
-          {this.renderContent()}
-          </div>
-        </Touchable>
+        <div className={`${prefixCls}-content`}>
+          <Swipe onChange={this.handleNavTo} activeSlide={activeKey}>
+            {this.renderContent()}
+          </Swipe>
+        </div>
       </div>
     )
   }

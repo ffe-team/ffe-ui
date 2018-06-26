@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as classnames from 'classnames';
 
-interface PropTypes {
+interface IPropTypes {
   onSwiping: () => void,
   onSwiped: () => void,
 }
 
-class Swipeable extends React.Component<PropTypes, any> {
+class Swipeable extends React.Component<IPropTypes, any> {
   
 }

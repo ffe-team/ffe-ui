@@ -7,7 +7,7 @@ class SwipeDemo extends React.Component<any, any> {
   render() {
     return (
       <div className="swipe-demo">
-        <Swipe indicator>
+        <Swipe indicator auto>
           <Swipe.Item>121212</Swipe.Item>
           <Swipe.Item>1adsdasd</Swipe.Item>
           <Swipe.Item>1212dfw2121212</Swipe.Item>

@@ -18,7 +18,10 @@ function mixin(mixins: Array<Function>): Function {
 
       for(let j = 0; j < keys.length; j ++) {
         const key = keys[j]
-        !target.prototype.hasOwnProperty(key) && Object.defineProperty(target.prototype, key, Object.getOwnPropertyDescriptor(mixins[i], key))
+
+        if (!target.prototype.hasOwnProperty(key)) {
+          Object.defineProperty(target.prototype, key, Object.getOwnPropertyDescriptor(mixins[i], key))
+        }
       }
     }
   }

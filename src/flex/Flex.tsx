@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as classnames from 'classnames'
 import FlexItem from './FlexItem'
 
-interface FlexPropTypes {
+interface IPropTypes {
   prefixCls: string,
   direction?: 'row' | 'row-reserve' | 'column' | 'column-reserve',
   justify?: 'start' | 'end' | 'center' | 'between' | 'around',
@@ -14,8 +14,8 @@ interface FlexPropTypes {
   children?: any,
 }
 
-class Flex extends React.Component<FlexPropTypes, any> {
-  public static defaultProps: FlexPropTypes = {
+class Flex extends React.Component<IPropTypes, any> {
+  public static defaultProps = {
     prefixCls: 'ffe-flex',
   }
   public static Item: any = FlexItem
